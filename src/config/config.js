@@ -6,5 +6,6 @@ export default {
   controllersPath: path.resolve (rootPath, 'app', 'controllers'),
   modelsPath: path.resolve (rootPath, 'app', 'models'),
   middlewaresPath: path.resolve (rootPath, 'app', 'middlewares'),
-  helpersPath: path.resolve (rootPath, 'app', 'helpers')
+  helpersPath: path.resolve (rootPath, 'app', 'helpers'),
+  schemasPath: path.resolve (rootPath, 'database', 'schemas')
 }
