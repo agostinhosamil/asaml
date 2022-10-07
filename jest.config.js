@@ -23,15 +23,15 @@ module.exports = {
   // collectCoverageFrom: undefined,
 
   // The directory where Jest should output its coverage files
-  coverageDirectory: "coverage",
+  coverageDirectory: 'coverage',
 
   // An array of regexp pattern strings used to skip coverage collection
   coveragePathIgnorePatterns: [
-    "\\\\node_modules\\\\"
+    '\\\\node_modules\\\\'
   ],
 
   // Indicates which provider should be used to instrument code for coverage
-  coverageProvider: "v8",
+  coverageProvider: 'v8',
 
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
@@ -121,11 +121,11 @@ module.exports = {
   // restoreMocks: false,
 
   // The root directory that Jest should scan for tests and modules within
-  rootDir: ".",
+  rootDir: '.',
 
   // A list of paths to directories that Jest should use to search for files in
   roots: [
-    "<rootDir>/tests"
+    '<rootDir>/tests'
   ],
 
   // Allows you to use a custom runner instead of Jest's default test runner
@@ -133,11 +133,11 @@ module.exports = {
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
   setupFiles: [
-    "dotenv/config"
+    'dotenv/config'
   ],
 
   detectOpenHandles: true,
-  passWithNoTests: true,  
+  passWithNoTests: true,
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
   // setupFilesAfterEnv: [],
@@ -159,7 +159,7 @@ module.exports = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: [
-    "**/tests/**/*.(test|spec).js"
+    '**/tests/**/*.(test|spec).js'
   ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
@@ -177,9 +177,9 @@ module.exports = {
   // testRunner: "jest-circus/runner",
 
   // A map from regular expressions to paths to transformers
-  transform: { 
-    "\\.(js|jsx|ts|tsx)$": "@sucrase/jest-plugin" 
-  },
+  transform: {
+    '\\.(js|jsx|ts|tsx)$': '@sucrase/jest-plugin'
+  }
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [
@@ -198,4 +198,4 @@ module.exports = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
-};
+}

@@ -1,5 +1,4 @@
 const store = {}
-
 export class AppModel extends Error {
   constructor (message) {
     super(message)
@@ -7,7 +6,7 @@ export class AppModel extends Error {
     this.name = this.constructor.name
   }
 
-  static async getAll () {
+  static async findAll () {
     const modelObject = this._getModelObject()
 
     try {
@@ -17,6 +16,22 @@ export class AppModel extends Error {
     } catch (err) {
       return []
     }
+  }
+
+  static async count () {
+    const modelObject = this._getModelObject()
+
+    try {
+      const records = modelObject.find({})
+
+      return await records.countDocuments()
+    } catch (err) {
+      return []
+    }
+  }
+
+  static async all () {
+    return await this.findAll()
   }
 
   static async create (data) {
@@ -30,6 +45,37 @@ export class AppModel extends Error {
       return null
     }
   }
+
+  static async deleteMany () {}
+  static async deleteOne () {}
+
+  static async find (recordId) {
+    const modelObject = this._getModelObject()
+
+    try {
+      if (typeof recordId !== typeof undefined) {
+        const record = modelObject.findOne({ _id: recordId })
+
+        return record
+      }
+    } catch (err) {
+      return null
+    }
+  }
+
+  // static async findById () {}
+  static async where () {}
+  static async findByIdAndDelete () {}
+  static async findByIdAndRemove () {}
+  static async findByIdAndUpdate () {}
+  static async findOne () {}
+  static async findOneAndDelete () {}
+  static async findOneAndRemove () {}
+  static async findOneAndReplace () {}
+  static async findOneAndUpdate () {}
+  static async replaceOne () {}
+  static async updateMany () {}
+  static async updateOne () {}
 
   static registerModuleDataObject (modelDataObject) {
     store[this.name] = modelDataObject

@@ -6,3 +6,4 @@ Router.get('/about', '@pages/about')
 
 Router.get('/users', '@users')
 Router.post('/users', '@users/store')
+Router.get('/users/:id', '@users/show')
