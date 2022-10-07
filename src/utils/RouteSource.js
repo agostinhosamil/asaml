@@ -1,97 +1,99 @@
 import path from 'path'
 import fs from 'fs'
 
-import config from '../config/config'
+import config from '../config'
 
 export class RouteSource {
   middleware = null
-  controller = null 
+  controller = null
   action = null
 
   constructor (sourceStr) {
     // sourceStr ~= middlewareClass:method@controller/action
-    const re = /([a-zA-Z0-9:_]*)@([a-zA-Z0-9:_]+)\/([a-zA-Z0-9:_]*)/i
+    const re = /([a-zA-Z0-9:_]*)@([a-zA-Z0-9:_]+)(\/[a-zA-Z0-9:_]*)?/i
 
-    const [_, middlewareStr, controllerName, action] = sourceStr.match (re)
+    if (!re.test(sourceStr)) {
+      return null
+    }
 
-    const controller = this.resolveController (controllerName)
-    const middleware = this.resolveMiddleware (middlewareStr)
-    
-    Object.assign (this, { middleware, controller, action })
+    const [middlewareStr, controllerName, actionName] = sourceStr.match(re).slice(1, 4)
+
+    const controller = this.resolveController(controllerName)
+    const middleware = this.resolveMiddleware(middlewareStr)
+
+    const action = actionName ? actionName.replace(/^(\/)+/, '', actionName) : 'index'
+
+    Object.assign(this, { middleware, controller, action })
   }
 
   resolveController (controllerName) {
-    const controllerPath = path.resolve (
+    const controllerPath = path.resolve(
       config.controllersPath,
-      `${this._title (controllerName)}Controller.js` 
+      `${this._title(controllerName)}Controller.js`
     )
 
     try {
+      if (fs.existsSync(controllerPath)) {
+        const controllerModuleObject = require(controllerPath)
 
-      if (fs.existsSync (controllerPath)) {
-        const controllerModuleObject = require (controllerPath)
-        
-        const controllerDataObject = controllerModuleObject[Object.keys (controllerModuleObject)[0]]
+        const ControllerDataObject = controllerModuleObject[Object.keys(controllerModuleObject)[0]]
 
-        if (this._isClass (controllerDataObject)) {
-          return new controllerDataObject          
+        if (this._isClass(ControllerDataObject)) {
+          return new ControllerDataObject()
         }
       } else {
-        this._errNotResolvedController (controllerName)
+        this._errNotResolvedController(controllerName)
       }
-
     } catch (err) {
-      this._errNotResolvedController (controllerName)
+      this._errNotResolvedController(controllerName)
     }
   }
 
   resolveMiddleware (middlewareStr) {
-    if (!/\S/.test(middlewareStr.toString ())) {
+    if (!/\S/.test(middlewareStr.toString())) {
       return
     }
 
-    const [middlewareName, middlewareAction] = middlewareStr.split (/\s*:\s*/)
+    const [middlewareName, middlewareAction] = middlewareStr.split(/\s*:\s*/)
 
-    const middlewarePath = path.resolve (
+    const middlewarePath = path.resolve(
       config.middlewaresPath,
-      `${this._title (middlewareName)}Middleware.js` 
+      `${this._title(middlewareName)}Middleware.js`
     )
-  
-    try {
-  
-      if (fs.existsSync (middlewarePath)) {
-        const middlewareModuleObject = require (middlewarePath)
 
-        if (Object.keys (middlewareModuleObject).length >= 1) {
-          const middlewareDataObject = middlewareModuleObject[Object.keys (middlewareModuleObject)[0]]
-  
-          if (this._isClass (middlewareDataObject)) {
-            const middleware = new middlewareDataObject
-            
-            if (typeof middleware [middlewareAction] === 'function') {
-              return middleware [middlewareAction]
+    try {
+      if (fs.existsSync(middlewarePath)) {
+        const middlewareModuleObject = require(middlewarePath)
+
+        if (Object.keys(middlewareModuleObject).length >= 1) {
+          const MiddlewareDataObject = middlewareModuleObject[Object.keys(middlewareModuleObject)[0]]
+
+          if (this._isClass(MiddlewareDataObject)) {
+            const middleware = new MiddlewareDataObject()
+
+            if (typeof middleware[middlewareAction] === 'function') {
+              return middleware[middlewareAction]
             }
           }
         }
       } else {
-        this._errNotResolvedMiddleware (middlewareName)
+        this._errNotResolvedMiddleware(middlewareName)
       }
-  
     } catch (err) {
-      this._errNotResolvedMiddleware (middlewareName)
+      this._errNotResolvedMiddleware(middlewareName)
     }
   }
 
   _errNotResolvedController (controllerName) {
-    throw new Error (`AppController: could not resolve controller '${controllerName}'`)
+    throw new Error(`AppController: could not resolve controller '${controllerName}'`)
   }
 
   _errNotResolvedMiddleware (middlewareName) {
-    throw new Error (`AppMiddleware: could not resolve middleware '${middlewareName}'`)
+    throw new Error(`AppMiddleware: could not resolve middleware '${middlewareName}'`)
   }
 
   _isClass (object) {
-    return typeof object === 'function' && /^class/i.test(object.toString ())
+    return typeof object === 'function' && /^class/i.test(object.toString())
   }
 
   _title (str) {

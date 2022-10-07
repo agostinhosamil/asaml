@@ -1,18 +1,17 @@
 import 'dotenv/config'
 import './config/routes'
 
-import app from "./app"
+import app from './app'
 
 import { log } from './config/log'
 import { Helper } from './utils/Helper'
 
 const PORT = process.env.PORT || 3000
 
-const main = (async () => {
+const main = async () => {
+  await Helper.setupModels()
 
-  await Helper.setupModels ()
+  app.listen(PORT, () => log('Server running'))
+}
 
-  app.listen (PORT, () => log ('Server running'))
-})
-
-main ()
+main()

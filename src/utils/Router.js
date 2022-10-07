@@ -5,23 +5,23 @@ const store = []
 
 export class Router {
   static get () {
-    return Router.factory ('get', arguments)
+    return Router.factory('get', arguments)
   }
-  
+
   static post () {
-    return Router.factory ('post', arguments)
+    return Router.factory('post', arguments)
   }
 
   static patch () {
-    return Router.factory ('patch', arguments)
+    return Router.factory('patch', arguments)
   }
 
   static delete () {
-    return Router.factory ('delete', arguments)
+    return Router.factory('delete', arguments)
   }
 
   static put () {
-    return Router.factory ('put', arguments)
+    return Router.factory('put', arguments)
   }
 
   static factory (httpVerb, args) {
@@ -31,31 +31,31 @@ export class Router {
 
     const route = new Route(httpVerb, routePath, routeSource)
 
-    store.push (route)
+    store.push(route)
 
     return route
   }
 
   static draw (app) {
-    store.forEach (route => {
+    store.forEach(route => {
       const routeArgs = [route.path]
-      const action = route.source.controller [route.source.action]
+      const action = route.source.controller[route.source.action]
 
       if (typeof route.source.middleware === 'function') {
-        routeArgs.push ([function (req, res, next) {
-          route.source.middleware.apply (this, arguments)
+        routeArgs.push([function (req, res, next) {
+          route.source.middleware.apply(this, arguments)
 
-          next ()
+          next()
         }])
       }
 
       if (!(typeof action === 'function')) {
-        throw new Error (`App:Router Error - `)
+        throw new Error('App:Router Error - Unresolved action for controller')
       }
 
-      routeArgs.push (action)
+      routeArgs.push(action)
 
-      app[route.verb].apply (app, routeArgs)
+      app[route.verb].apply(app, routeArgs)
     })
   }
 }

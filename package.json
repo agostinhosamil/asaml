@@ -7,7 +7,8 @@
     "dev": "cross-env NODE_ENV=development DEBUG=app:root PORT=3000 nodemon src/server.js --trace-warnings",
     "start": "node dist/server.js",
     "build": "sucrase ./src -d ./dist --transforms imports",
-    "test": "jest"
+    "test": "cross-env NODE_ENV=test jest",
+    "lint": "eslint --ext .js src/"
   },
   "dependencies": {
     "body-parser": "^1.20.1",

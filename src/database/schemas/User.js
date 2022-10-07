@@ -10,7 +10,7 @@ export default {
     unique: true,
     lowercase: true
   },
-  
+
   password: {
     type: String,
     required: true
