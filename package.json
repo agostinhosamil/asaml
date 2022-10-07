@@ -1,5 +1,6 @@
 {
   "name": "asaml",
+  "description": "Web MVC API",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -8,7 +9,8 @@
     "start": "node dist/server.js",
     "build": "sucrase ./src -d ./dist --transforms imports",
     "test": "cross-env NODE_ENV=test jest",
-    "lint": "eslint --ext .js src/"
+    "lint": "eslint --ext .js src/",
+    "commit": "cz"
   },
   "dependencies": {
     "body-parser": "^1.20.1",
