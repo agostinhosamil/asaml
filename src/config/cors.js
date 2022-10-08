@@ -1,4 +1,4 @@
-import { Helper } from '../utils/Helper'
+import { Helper } from '@utils/Helper'
 
 export default Helper.corsOptions({
   origin: [

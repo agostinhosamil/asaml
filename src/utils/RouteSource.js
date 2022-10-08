@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 
-import config from '../config'
+import config from '~/config'
 
 export class RouteSource {
   middleware = null

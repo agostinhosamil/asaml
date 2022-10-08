@@ -1,3 +1,5 @@
+import { Helper } from '@utils/Helper'
+
 const store = {}
 export class AppModel extends Error {
   constructor (message) {
@@ -7,7 +9,7 @@ export class AppModel extends Error {
   }
 
   static async findAll () {
-    const modelObject = this._getModelObject()
+    const modelObject = await this._getModelObject()
 
     try {
       const records = await modelObject.find({})
@@ -19,7 +21,7 @@ export class AppModel extends Error {
   }
 
   static async count () {
-    const modelObject = this._getModelObject()
+    const modelObject = await this._getModelObject()
 
     try {
       const records = modelObject.find({})
@@ -35,22 +37,23 @@ export class AppModel extends Error {
   }
 
   static async create (data) {
-    const modelObject = this._getModelObject()
+    const modelObject = await this._getModelObject()
 
-    try {
-      const records = await modelObject.create(data)
+    // try {
+    const records = await modelObject.create(data)
 
-      return records
-    } catch (err) {
-      return null
-    }
+    return records
+    // } catch (err) {
+    //   // console.log(err)
+    //   return null
+    // }
   }
 
   static async deleteMany () {}
   static async deleteOne () {}
 
   static async find (recordId) {
-    const modelObject = this._getModelObject()
+    const modelObject = await this._getModelObject()
 
     try {
       if (typeof recordId !== typeof undefined) {
@@ -81,7 +84,11 @@ export class AppModel extends Error {
     store[this.name] = modelDataObject
   }
 
-  static _getModelObject () {
+  static async _getModelObject () {
+    if (!store[this.name]) {
+      await Helper.setupModels()
+    }
+
     return store[this.name]
   }
 }

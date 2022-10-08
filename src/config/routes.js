@@ -1,4 +1,4 @@
-import { Router } from '../utils/Router'
+import { Router } from '@utils/Router'
 
 Router.get('/', 'auth:root@pages')
 

@@ -1,8 +1,8 @@
-import { AppMiddleware } from "./AppMiddleware"
+import { AppMiddleware } from './AppMiddleware'
 
 export class AuthMiddleware extends AppMiddleware {
   root () {
-    console.log ('Hi, I am a middleware')
+    console.log('Hi, I am a middleware')
   }
 
   jwt () {

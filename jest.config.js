@@ -88,7 +88,15 @@ module.exports = {
   // ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  // moduleNameMapper: {},
+  moduleNameMapper: {
+    '^~/(.*)$': '<rootDir>/src/$1',
+    '^@root/(.*)$': '<rootDir>/$1',
+    '^@config/(.*)$': '<rootDir>/src/config/$1',
+    '^@utils/(.*)$': '<rootDir>/src/utils/$1',
+    '^@controllers/(.*)$': '<rootDir>/src/app/controllers/$1',
+    '^@models/(.*)$': '<rootDir>/src/app/models/$1',
+    '^@schemas/(.*)$': '<rootDir>/src/database/schemas/$1'
+  },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
@@ -133,7 +141,7 @@ module.exports = {
 
   // The paths to modules that run some code to configure or set up the testing environment before each test
   setupFiles: [
-    'dotenv/config'
+    '<rootDir>/src/config/dotenv'
   ],
 
   detectOpenHandles: true,

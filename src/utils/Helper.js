@@ -1,12 +1,12 @@
 import path from 'path'
 import fs from 'fs/promises'
-import config from '../config'
-import mongoose from '../config/database'
+import config from '@config/index'
+import mongoose from '@config/database'
 
 export class Helper {
   static corsOptions (corsOptions) {
     Object.keys(corsOptions).forEach(key => {
-      const keyReader = `_read${Helper.title(key)}`
+      const keyReader = `_readCors${Helper.title(key)}`
 
       if (typeof Helper[keyReader] === 'function') {
         corsOptions[key] = Helper[keyReader](corsOptions[key])
@@ -16,7 +16,7 @@ export class Helper {
     return corsOptions
   }
 
-  static _readOrigin (origin) {
+  static _readCorsOrigin (origin) {
     if (origin instanceof Array) {
       return (requestOrigin, callback) => {
         if (origin.indexOf(requestOrigin) !== -1 || !requestOrigin) {
@@ -45,10 +45,10 @@ export class Helper {
       .filter(modelFile => !/^(AppModel\.js)$/.test(modelFile))
       .map(async modelFile => {
         const modelFilePath = path.join(config.modelsPath, modelFile)
-        const modelSchemaFilePath = path.join(config.schemasPath, modelFile)
+        const modelSchemaFilePath = path.join(config.schemasPath, [modelFile.replace(/((Schema)?\.js)$/i, ''), 'js'].join('.'))
         const modelName = modelFile.replace(/\.js$/i, '')
 
-        const modelModuleObject = await import(modelFilePath)
+        const modelModuleObject = require(modelFilePath)
 
         const modelClassObject = modelModuleObject[modelName]
 
@@ -56,7 +56,7 @@ export class Helper {
           typeof modelClassObject.registerModuleDataObject === 'function') {
           // console.log (modelClassObject)
           try {
-            const modelSchemaObject = await import(modelSchemaFilePath)
+            const modelSchemaObject = require(modelSchemaFilePath)
             const modelSchema = new mongoose.Schema(modelSchemaObject.default)
 
             Object.getOwnPropertyNames(modelClassObject).forEach(key => {

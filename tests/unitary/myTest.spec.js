@@ -1,10 +1,22 @@
-import { User } from '../../src/app/models/User'
+import { User } from '@models/User'
 
-describe('APp Test', () => {
-  it('should do it well', () => {
+import mongoose from '@config/database'
+
+describe('App Test', () => {
+  afterAll(async () => {
+    await mongoose.disconnect()
+  })
+
+  it('should do it well', async () => {
     const val = 1 + 3
 
-    expect(User.name).toBe('User')
+    const user = await User.create({
+      name: 'John Doe',
+      email: 'john.doe.' + Math.random() + 'ysy@gmail.com',
+      password: 'Mandatory'
+    })
+
+    expect(user.name).toBe('John Doe')
 
     expect(val).toBe(4)
   })
