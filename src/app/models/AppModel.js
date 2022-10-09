@@ -39,14 +39,14 @@ export class AppModel extends Error {
   static async create (data) {
     const modelObject = await this._getModelObject()
 
-    // try {
-    const records = await modelObject.create(data)
+    try {
+      const records = await modelObject.create(data)
 
-    return records
-    // } catch (err) {
-    //   // console.log(err)
-    //   return null
-    // }
+      return records
+    } catch (err) {
+      // console.log(err)
+      return null
+    }
   }
 
   static async deleteMany () {}
