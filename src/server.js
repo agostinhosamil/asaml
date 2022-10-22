@@ -8,7 +8,7 @@ import setup from '@config/setup'
 const PORT = process.env.PORT || 3000
 
 const main = async () => {
-  Promise.all(setup)
+  await Promise.all(setup)
 
   app.listen(PORT, () => log('Server running'))
 }
