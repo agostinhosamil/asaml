@@ -34,6 +34,11 @@ export class Helper {
     return str.charAt(0).toUpperCase() + str.slice(1, str.length)
   }
 
+  static isEmail (data) {
+    const re = /^(.+)@(.+)$/
+    return typeof data === typeof 'str' && re.test(data)
+  }
+
   static isClass (object) {
     return typeof object === 'function' && /^class/i.test(object.toString())
   }

@@ -1,3 +1,5 @@
+import 'dotenv/config'
+
 import { join } from 'path'
 import { config } from 'dotenv'
 

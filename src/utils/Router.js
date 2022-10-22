@@ -1,6 +1,8 @@
 import { Route } from './Route'
 import { RouteSource } from './RouteSource'
 
+import { log } from '@config/log'
+
 const store = []
 
 export class Router {
@@ -41,11 +43,39 @@ export class Router {
       const routeArgs = [route.path]
       const action = route.source.controller[route.source.action]
 
+      const internalServerErrorHandler = (res, error) => {
+        log(error)
+
+        res
+          .status(500)
+          .json({
+            error: 'Internal server error',
+            message: 'Sorry! Some thing went wrong'
+          })
+          .end()
+      }
+
       if (typeof route.source.middleware === 'function') {
         routeArgs.push([function (req, res, next) {
-          route.source.middleware.apply(this, arguments)
+          try {
+            const middlewareData = route.source.middleware.apply(this, arguments)
 
-          next()
+            if (middlewareData instanceof Promise) {
+              middlewareData
+                .then(() => {
+                  if (!res.finished) {
+                    next()
+                  }
+                })
+                .catch(error => {
+                  internalServerErrorHandler(res, error)
+                })
+            } else {
+              next()
+            }
+          } catch (error) {
+            internalServerErrorHandler(res, error)
+          }
         }])
       }
 
