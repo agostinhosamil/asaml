@@ -1,12 +1,6 @@
 import { User } from '@models/User'
 
-import mongoose from '@config/database'
-
 describe('App Test', () => {
-  afterAll(async () => {
-    await mongoose.disconnect()
-  })
-
   it('should do it well', async () => {
     const val = 1 + 3
 
