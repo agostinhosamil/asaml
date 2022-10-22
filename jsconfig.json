@@ -20,6 +20,9 @@
       "@schemas/*": [
         "./src/database/schemas/*"
       ],
+      "@database/*": [
+        "./src/database/*"
+      ],
       "@config/*": [
         "./src/config/*"
       ],
