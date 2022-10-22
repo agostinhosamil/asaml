@@ -2,4 +2,8 @@ node_modules
 coverage
 
 .env
+.env.test
+.env.development
 .history
+
+yarn-error.log
