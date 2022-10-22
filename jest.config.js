@@ -1,3 +1,5 @@
+const { _moduleAliases } = require('./package.json')
+const { moduleAliasesToModuleNameMapper } = require('./vendor/console/helpers')
 /*
  * For a detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/configuration
@@ -88,15 +90,7 @@ module.exports = {
   // ],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-  moduleNameMapper: {
-    '^~/(.*)$': '<rootDir>/src/$1',
-    '^@root/(.*)$': '<rootDir>/$1',
-    '^@config/(.*)$': '<rootDir>/src/config/$1',
-    '^@utils/(.*)$': '<rootDir>/src/utils/$1',
-    '^@controllers/(.*)$': '<rootDir>/src/app/controllers/$1',
-    '^@models/(.*)$': '<rootDir>/src/app/models/$1',
-    '^@schemas/(.*)$': '<rootDir>/src/database/schemas/$1'
-  },
+  moduleNameMapper: moduleAliasesToModuleNameMapper(_moduleAliases, { prefix: '<rootDir>' }),
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
   // modulePathIgnorePatterns: [],
