@@ -1,14 +1,10 @@
-import { User } from '@models/User'
+import factory from '@database/factory'
 
 describe('App Test', () => {
   it('should do it well', async () => {
     const val = 1 + 3
 
-    const user = await User.create({
-      name: 'John Doe',
-      email: 'john.doe.' + Math.random() + 'ysy@gmail.com',
-      password: 'Mandatory'
-    })
+    const user = await factory.create('User', { name: 'John Doe' })
 
     expect(user.name).toBe('John Doe')
 
