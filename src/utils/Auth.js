@@ -46,14 +46,14 @@ export class Auth {
     }
   }
 
-  static async authenticate (req) {
+  static async authenticate (request) {
     const authorization = {}
 
-    Object.keys(req.headers).forEach(header => {
+    Object.keys(request.headers).forEach(header => {
       if (/^(authorization)$/i.test(header)) {
         const re = /^(Bearer\s+)/i
         authorization.token = (
-          req.headers[header]
+          request.headers[header]
             .replace(re, '')
             .trim()
         )
