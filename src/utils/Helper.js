@@ -57,6 +57,10 @@ export class Helper {
 
         const modelClassObject = modelModuleObject[modelName]
 
+        if (modelClassObject._registered) {
+          return null
+        }
+
         if (Helper.isClass(modelClassObject) &&
           typeof modelClassObject.registerModuleDataObject === 'function') {
           // console.log (modelClassObject)
@@ -74,7 +78,10 @@ export class Helper {
                   modelSchemaHookName
                 ] = match
 
-                modelSchema[modelSchemaHookAdderMethodName.toLowerCase()](modelSchemaHookName.toLowerCase(), modelClassObject[modelClassObjectMethodName])
+                modelSchema[modelSchemaHookAdderMethodName.toLowerCase()](
+                  modelSchemaHookName.toLowerCase(),
+                  modelClassObject[modelClassObjectMethodName]
+                )
               }
             })
 
