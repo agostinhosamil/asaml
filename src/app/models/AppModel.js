@@ -1,11 +1,11 @@
 import { Helper } from '@utils/Helper'
 
 const store = {}
-export class AppModel extends Error {
-  constructor (message) {
-    super(message)
-
-    this.name = this.constructor.name
+export class AppModel {
+  constructor (data) {
+    if (typeof data === 'object') {
+      Object.assign(this, data)
+    }
   }
 
   static async findAll () {
@@ -216,5 +216,25 @@ export class AppModel extends Error {
     }
 
     return store[this.name]
+  }
+
+  static get _registered () {
+    return Boolean(store[this.name])
+  }
+
+  get _className () {
+    return this.constructor.name
+  }
+
+  async save () {
+    const data = {}
+
+    Object.keys(this).forEach(key => {
+      data[key] = this[key]
+    })
+
+    const record = await this.constructor.create(data)
+
+    return record
   }
 }
