@@ -1,5 +1,6 @@
 import { Auth } from '@utils/Auth'
-import { User } from '../models/User'
+import { User } from '@models/User'
+
 import { AppMiddleware } from './AppMiddleware'
 
 export class AuthMiddleware extends AppMiddleware {
@@ -7,20 +8,20 @@ export class AuthMiddleware extends AppMiddleware {
     console.log('Hi, I am a middleware')
   }
 
-  async jwt (req, res) {
+  async jwt (request, response) {
     // some jwt implementation
-    const auth = await Auth.authenticate(req)
+    const auth = await Auth.authenticate(request)
 
     if (auth) {
       const user = await User.find(auth.user)
 
-      req.user = user
+      request.user = user
     } else {
-      res
+      response
         .status(401)
         .json({
           error: 'Unauthenticated',
-          message: 'Firstly login'
+          message: 'Firstly, you have to login'
         })
         .end()
     }

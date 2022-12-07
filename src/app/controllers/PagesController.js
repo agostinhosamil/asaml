@@ -4,7 +4,7 @@ import { Auth } from '@utils/Auth'
 
 export class PagesController extends AppController {
   index (req, res) {
-    res.end('HEYEYE')
+    res.end('Hey')
   }
 
   about (req, res) {

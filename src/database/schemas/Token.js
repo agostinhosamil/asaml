@@ -1,4 +1,4 @@
-import mongoose from '~/config/database'
+import mongoose from '~/config/mongoose'
 
 export default {
   body: {

@@ -1,19 +1,19 @@
 import { compare } from 'bcryptjs'
+import { sign, verify } from 'jsonwebtoken'
 
 import { log } from '~/config/log'
 import { Helper } from './Helper'
 
 import { User } from '@models/User'
 // import { Token } from '@models/Token'
-import { sign, verify } from 'jsonwebtoken'
 
 export class Auth {
   static async attempt ({ username, password }) {
-    const authField = Helper.isEmail(username) ? 'email' : 'username'
+    const authFieldKeyName = Helper.isEmail(username) ? 'email' : 'username'
 
     const userData = {}
 
-    userData[authField] = username
+    userData[authFieldKeyName] = username
 
     try {
       const queryResult = await User.where(userData)
@@ -30,12 +30,14 @@ export class Auth {
         } else {
           return Auth._error({
             status: 401,
+            error_code: 1,
             message: 'Incorrect user password'
           })
         }
       } else {
         return Auth._error({
           status: 404,
+          error_code: 0,
           message: 'Unknown user'
         })
       }
@@ -77,7 +79,7 @@ export class Auth {
   static _error (error) {
     return (
       {
-        user: {},
+        user: null,
         token: '',
         error
       }

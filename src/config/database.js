@@ -1,9 +1,15 @@
-import mongoose from 'mongoose'
+export const mongo = {
+  url: process.env.ATLAS_URI
+}
 
-mongoose.connect(process.env.ATLAS_URI)
+export const mysql = {
+  url: process.env.MYSQL_DATABASE_URL
+}
 
-mongoose.promise = global.Promise
+export default {
+  adapter: 'mongo',
 
-// mongoose.disconnect()
-
-export default mongoose
+  // adapters
+  mongo,
+  mysql
+}

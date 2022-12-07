@@ -1,6 +1,8 @@
 import { Helper } from '@utils/Helper'
+import { ModelDataObject } from '@utils/ModelDataObject'
 
 const store = {}
+
 export class AppModel {
   constructor (data) {
     if (typeof data === 'object') {
@@ -8,11 +10,12 @@ export class AppModel {
     }
   }
 
+  /*
   static async findAll () {
     const modelObject = await this._getModelObject()
 
     try {
-      const records = await modelObject.find({})
+      const records = await modelObject.findAll()
 
       return records
     } catch (err) {
@@ -49,8 +52,8 @@ export class AppModel {
     }
   }
 
-  static async deleteMany () {}
-  static async deleteOne () {}
+  static async deleteMany () { }
+  static async deleteOne () { }
 
   static async find (recordId) {
     const modelObject = await this._getModelObject()
@@ -205,9 +208,43 @@ export class AppModel {
       return null
     }
   }
+  */
 
   static registerModuleDataObject (modelDataObject) {
-    store[this.name] = modelDataObject
+    const adapter = this.adapter || 'mongo'
+
+    store[this.name] = new ModelDataObject(modelDataObject, this, adapter)
+
+    const crudMethods = [
+      // CREATE
+      'create',
+      // READ
+      'all',
+      'findAll',
+      'find',
+      'read',
+      // UPDATE
+      'update',
+      'updateById',
+      'updateBy',
+      // DELETE
+      'delete',
+      'deleteById',
+      'deleteBy'
+    ]
+
+    crudMethods
+      .forEach(crudMethod => {
+        this[crudMethod] = async (...args) => {
+          const result = store[this.name][crudMethod].apply(store[this.name], args)
+
+          if (result instanceof Promise) {
+            return await result
+          }
+
+          return result
+        }
+      })
   }
 
   static async _getModelObject () {

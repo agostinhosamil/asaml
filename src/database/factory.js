@@ -22,7 +22,12 @@ for (const factoryFile of factoryFilesList) {
 
     const factoryModelName = factoryModelModuleKeys[0]
 
-    factory.define(factoryModelName, factoryModel, factoryDefinitionContext.default)
+    factory.define(
+      factoryModelName,
+      factoryModel,
+      factoryDefinitionContext.default,
+      factoryDefinitionContext.buildOptions || {}
+    )
   } catch (e) {}
 }
 

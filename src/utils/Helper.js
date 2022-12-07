@@ -1,7 +1,8 @@
 import path from 'path'
 import fs from 'fs/promises'
 import config from '@config/index'
-import mongoose from '@config/database'
+import database from '@config/database'
+import Adapters from './ModelDataObject/Adapters'
 
 export class Helper {
   static corsOptions (corsOptions) {
@@ -50,7 +51,7 @@ export class Helper {
       .filter(modelFile => !/^(AppModel\.js)$/.test(modelFile))
       .map(async modelFile => {
         const modelFilePath = path.join(config.modelsPath, modelFile)
-        const modelSchemaFilePath = path.join(config.schemasPath, [modelFile.replace(/((Schema)?\.js)$/i, ''), 'js'].join('.'))
+
         const modelName = modelFile.replace(/\.js$/i, '')
 
         const modelModuleObject = require(modelFilePath)
@@ -64,32 +65,14 @@ export class Helper {
         if (Helper.isClass(modelClassObject) &&
           typeof modelClassObject.registerModuleDataObject === 'function') {
           // console.log (modelClassObject)
-          try {
-            const modelSchemaObject = require(modelSchemaFilePath)
-            const modelSchema = new mongoose.Schema(modelSchemaObject.default)
 
-            Object.getOwnPropertyNames(modelClassObject).forEach(key => {
-              const match = key.match(/^(post|pre)(.+)/i)
+          const modelAdapter = typeof modelClassObject.adapter === typeof 'str' ? modelClassObject.adapter : database.adapter
 
-              if (match) {
-                const [
-                  modelClassObjectMethodName,
-                  modelSchemaHookAdderMethodName /* pre, post */,
-                  modelSchemaHookName
-                ] = match
-
-                modelSchema[modelSchemaHookAdderMethodName.toLowerCase()](
-                  modelSchemaHookName.toLowerCase(),
-                  modelClassObject[modelClassObjectMethodName]
-                )
-              }
+          if (Adapters.defined(modelAdapter)) {
+            Adapters[modelAdapter].setupModel({
+              modelClassObject,
+              modelFile
             })
-
-            const modelDataObject = mongoose.model(modelName, modelSchema)
-
-            modelClassObject.registerModuleDataObject(modelDataObject)
-          } catch (err) {
-            throw new Error(err)
           }
         }
       })
