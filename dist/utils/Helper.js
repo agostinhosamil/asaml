@@ -13,6 +13,8 @@ var _config = _interopRequireDefault(require("../config"));
 
 var _database = _interopRequireDefault(require("../config/database"));
 
+var _Adapters = _interopRequireDefault(require("./ModelDataObject/Adapters"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class Helper {
@@ -45,6 +47,11 @@ class Helper {
     return str.charAt(0).toUpperCase() + str.slice(1, str.length);
   }
 
+  static isEmail(data) {
+    const re = /^(.+)@(.+)$/;
+    return typeof data === typeof 'str' && re.test(data);
+  }
+
   static isClass(object) {
     return typeof object === 'function' && /^class/i.test(object.toString());
   }
@@ -54,36 +61,25 @@ class Helper {
     modelsFileList.filter(modelFile => !/^(AppModel\.js)$/.test(modelFile)).map(async modelFile => {
       const modelFilePath = _path.default.join(_config.default.modelsPath, modelFile);
 
-      const modelSchemaFilePath = _path.default.join(_config.default.schemasPath, [modelFile.replace(/((Schema)?\.js)$/i, ''), 'js'].join('.'));
-
       const modelName = modelFile.replace(/\.js$/i, '');
 
       const modelModuleObject = require(modelFilePath);
 
       const modelClassObject = modelModuleObject[modelName];
 
+      if (modelClassObject._registered) {
+        return null;
+      }
+
       if (Helper.isClass(modelClassObject) && typeof modelClassObject.registerModuleDataObject === 'function') {
         // console.log (modelClassObject)
-        try {
-          const modelSchemaObject = require(modelSchemaFilePath);
+        const modelAdapter = typeof modelClassObject.adapter === typeof 'str' ? modelClassObject.adapter : _database.default.adapter;
 
-          const modelSchema = new _database.default.Schema(modelSchemaObject.default);
-          Object.getOwnPropertyNames(modelClassObject).forEach(key => {
-            const match = key.match(/^(post|pre)(.+)/i);
-
-            if (match) {
-              const [modelClassObjectMethodName, modelSchemaHookAdderMethodName
-              /* pre, post */
-              , modelSchemaHookName] = match;
-              modelSchema[modelSchemaHookAdderMethodName.toLowerCase()](modelSchemaHookName.toLowerCase(), modelClassObject[modelClassObjectMethodName]);
-            }
+        if (_Adapters.default.defined(modelAdapter)) {
+          _Adapters.default[modelAdapter].setupModel({
+            modelClassObject,
+            modelFile
           });
-
-          const modelDataObject = _database.default.model(modelName, modelSchema);
-
-          modelClassObject.registerModuleDataObject(modelDataObject);
-        } catch (err) {
-          throw new Error(err);
         }
       }
     });

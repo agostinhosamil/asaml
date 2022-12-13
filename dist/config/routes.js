@@ -11,3 +11,7 @@ _Router.Router.get('/users', '@users');
 _Router.Router.post('/users', '@users/store');
 
 _Router.Router.get('/users/:id', '@users/show');
+
+_Router.Router.post('/login', '@pages/login');
+
+_Router.Router.get('/home', 'auth:jwt@pages/home');

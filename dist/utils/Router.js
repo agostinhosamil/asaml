@@ -9,6 +9,8 @@ var _Route = require("./Route");
 
 var _RouteSource = require("./RouteSource");
 
+var _log = require("../config/log");
+
 const store = [];
 
 class Router {
@@ -45,10 +47,33 @@ class Router {
       const routeArgs = [route.path];
       const action = route.source.controller[route.source.action];
 
+      const internalServerErrorHandler = (res, error) => {
+        (0, _log.log)(error);
+        res.status(500).json({
+          error: 'Internal server error',
+          message: 'Sorry! Some thing went wrong'
+        }).end();
+      };
+
       if (typeof route.source.middleware === 'function') {
         routeArgs.push([function (req, res, next) {
-          route.source.middleware.apply(this, arguments);
-          next();
+          try {
+            const middlewareData = route.source.middleware.apply(this, arguments);
+
+            if (middlewareData instanceof Promise) {
+              middlewareData.then(() => {
+                if (!res.finished) {
+                  next();
+                }
+              }).catch(error => {
+                internalServerErrorHandler(res, error);
+              });
+            } else {
+              next();
+            }
+          } catch (error) {
+            internalServerErrorHandler(res, error);
+          }
         }]);
       }
 

@@ -1,6 +1,6 @@
 "use strict";
 
-require("module-alias/register");
+require("../vendor/console/setups/module-aliases");
 
 require("./config/dotenv");
 

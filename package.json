@@ -62,16 +62,5 @@
     "hooks": {
       "prepare-commit-msg": "exec < /dev/tty && npx cz --hook || true"
     }
-  },
-  "_moduleAliases": {
-    "~": "./src",
-    "@root": ".",
-    "@controllers": "./src/app/controllers",
-    "@middlewares": "./src/app/middlewares",
-    "@models": "./src/app/models",
-    "@schemas": "./src/database/schemas",
-    "@database": "./src/database",
-    "@config": "./src/config",
-    "@utils": "./src/utils"
   }
 }

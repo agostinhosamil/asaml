@@ -9,8 +9,10 @@ var _bcryptjs = require("bcryptjs");
 
 var _AppModel = require("./AppModel");
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 class User extends _AppModel.AppModel {
-  static async preSave() {
+  static async beforeCreate() {
     if (this.password) {
       this.password = await (0, _bcryptjs.hash)(this.password, 8);
     }
@@ -19,3 +21,5 @@ class User extends _AppModel.AppModel {
 }
 
 exports.User = User;
+
+_defineProperty(User, "adapter", 'mysql');

@@ -1,9 +1,14 @@
 import { Helper } from '@utils/Helper'
+// import { asyncToGenerator } from '@utils/asyncToGenerator'
 import { ModelDataObject } from '@utils/ModelDataObject'
 
 const store = {}
 
+const createdSymbol = Symbol('created')
+
 export class AppModel {
+  [createdSymbol] = false
+
   constructor (data) {
     if (typeof data === 'object') {
       Object.assign(this, data)
@@ -221,6 +226,7 @@ export class AppModel {
       // READ
       'all',
       'findAll',
+      'where',
       'find',
       'read',
       // UPDATE
@@ -247,6 +253,129 @@ export class AppModel {
       })
   }
 
+  // CRUD
+  static async create () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.create(...arguments)
+
+      return result
+    }
+  }
+
+  static async all () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.all(...arguments)
+
+      return result
+    }
+  }
+
+  static async findAll () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.findAll(...arguments)
+
+      return result
+    }
+  }
+
+  static async where () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.where(...arguments)
+
+      return result
+    }
+  }
+
+  static async find () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.find(...arguments)
+
+      return result
+    }
+  }
+
+  static async read () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.read(...arguments)
+
+      return result
+    }
+  }
+
+  static async update () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.update(...arguments)
+
+      return result
+    }
+  }
+
+  static async updateById () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.updateById(...arguments)
+
+      return result
+    }
+  }
+
+  static async updateBy () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.updateBy(...arguments)
+
+      return result
+    }
+  }
+
+  static async delete () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.delete(...arguments)
+
+      return result
+    }
+  }
+
+  static async deleteById () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.deleteById(...arguments)
+
+      return result
+    }
+  }
+
+  static async deleteBy () {
+    const modelDataObject = await this._getModelObject()
+
+    if (modelDataObject) {
+      const result = await this.deleteBy(...arguments)
+
+      return result
+    }
+  }
+
+  // END CRUD
+
   static async _getModelObject () {
     if (!store[this.name]) {
       await Helper.setupModels()
@@ -263,6 +392,10 @@ export class AppModel {
     return this.constructor.name
   }
 
+  created () {
+    return Boolean(this[createdSymbol])
+  }
+
   async save () {
     const data = {}
 
@@ -271,6 +404,12 @@ export class AppModel {
     })
 
     const record = await this.constructor.create(data)
+
+    if (record) {
+      Object.assign(this, record)
+
+      this[createdSymbol] = true
+    }
 
     return record
   }

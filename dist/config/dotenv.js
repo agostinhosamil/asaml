@@ -1,5 +1,7 @@
 "use strict";
 
+require("dotenv/config");
+
 var _path = require("path");
 
 var _dotenv = require("dotenv");

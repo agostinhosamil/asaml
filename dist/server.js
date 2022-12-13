@@ -13,7 +13,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 const PORT = process.env.PORT || 3000;
 
 const main = async () => {
-  Promise.all(_setup.default);
+  if (_setup.default instanceof Array) {
+    await Promise.all(_setup.default);
+  }
 
   _app.default.listen(PORT, () => (0, _log.log)('Server running'));
 };

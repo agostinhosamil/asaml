@@ -4,6 +4,8 @@ import config from '@config/index'
 import database from '@config/database'
 import Adapters from './ModelDataObject/Adapters'
 
+const setupDoneSymbol = Symbol('setupDone')
+
 export class Helper {
   static corsOptions (corsOptions) {
     Object.keys(corsOptions).forEach(key => {
@@ -49,7 +51,7 @@ export class Helper {
 
     modelsFileList
       .filter(modelFile => !/^(AppModel\.js)$/.test(modelFile))
-      .map(async modelFile => {
+      .forEach(modelFile => {
         const modelFilePath = path.join(config.modelsPath, modelFile)
 
         const modelName = modelFile.replace(/\.js$/i, '')
@@ -76,5 +78,11 @@ export class Helper {
           }
         }
       })
+
+    Helper[setupDoneSymbol] = true
+  }
+
+  static ModelsSetupDone () {
+    return Boolean(Helper[setupDoneSymbol])
   }
 }

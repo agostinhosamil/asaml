@@ -3,15 +3,19 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
-
-var _mongoose = _interopRequireDefault(require("mongoose"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_mongoose.default.connect(process.env.ATLAS_URI);
-
-_mongoose.default.promise = global.Promise; // mongoose.disconnect()
-
-var _default = _mongoose.default;
+exports.mysql = exports.mongo = exports.default = void 0;
+const mongo = {
+  url: process.env.ATLAS_URI
+};
+exports.mongo = mongo;
+const mysql = {
+  url: process.env.MYSQL_DATABASE_URL
+};
+exports.mysql = mysql;
+var _default = {
+  adapter: 'mongo',
+  // adapters
+  mongo,
+  mysql
+};
 exports.default = _default;
