@@ -6,7 +6,7 @@ _Router.Router.get('/', 'auth:root@pages');
 
 _Router.Router.get('/about', '@pages/about');
 
-_Router.Router.get('/users', '@users');
+_Router.Router.get('/users', 'auth:jwt@users');
 
 _Router.Router.post('/users', '@users/store');
 

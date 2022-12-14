@@ -7,7 +7,7 @@ module.exports = {
       '@babel/preset-env',
       {
         targets: {
-          node: '2012'
+          node: '6'
         }
       }
     ]

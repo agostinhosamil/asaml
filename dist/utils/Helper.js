@@ -17,6 +17,12 @@ var _Adapters = _interopRequireDefault(require("./ModelDataObject/Adapters"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+const setupDoneSymbol = Symbol('setupDone');
+
 class Helper {
   static corsOptions(corsOptions) {
     Object.keys(corsOptions).forEach(key => {
@@ -56,33 +62,40 @@ class Helper {
     return typeof object === 'function' && /^class/i.test(object.toString());
   }
 
-  static async setupModels() {
-    const modelsFileList = await _promises.default.readdir(_config.default.modelsPath);
-    modelsFileList.filter(modelFile => !/^(AppModel\.js)$/.test(modelFile)).map(async modelFile => {
-      const modelFilePath = _path.default.join(_config.default.modelsPath, modelFile);
+  static setupModels() {
+    return _asyncToGenerator(function* () {
+      const modelsFileList = yield _promises.default.readdir(_config.default.modelsPath);
+      modelsFileList.filter(modelFile => !/^(AppModel\.js)$/.test(modelFile)).forEach(modelFile => {
+        const modelFilePath = _path.default.join(_config.default.modelsPath, modelFile);
 
-      const modelName = modelFile.replace(/\.js$/i, '');
+        const modelName = modelFile.replace(/\.js$/i, '');
 
-      const modelModuleObject = require(modelFilePath);
+        const modelModuleObject = require(modelFilePath);
 
-      const modelClassObject = modelModuleObject[modelName];
+        const modelClassObject = modelModuleObject[modelName];
 
-      if (modelClassObject._registered) {
-        return null;
-      }
-
-      if (Helper.isClass(modelClassObject) && typeof modelClassObject.registerModuleDataObject === 'function') {
-        // console.log (modelClassObject)
-        const modelAdapter = typeof modelClassObject.adapter === typeof 'str' ? modelClassObject.adapter : _database.default.adapter;
-
-        if (_Adapters.default.defined(modelAdapter)) {
-          _Adapters.default[modelAdapter].setupModel({
-            modelClassObject,
-            modelFile
-          });
+        if (modelClassObject._registered) {
+          return null;
         }
-      }
-    });
+
+        if (Helper.isClass(modelClassObject) && typeof modelClassObject.registerModuleDataObject === 'function') {
+          // console.log (modelClassObject)
+          const modelAdapter = typeof modelClassObject.adapter === typeof 'str' ? modelClassObject.adapter : _database.default.adapter;
+
+          if (_Adapters.default.defined(modelAdapter)) {
+            _Adapters.default[modelAdapter].setupModel({
+              modelClassObject,
+              modelFile
+            });
+          }
+        }
+      });
+      Helper[setupDoneSymbol] = true;
+    })();
+  }
+
+  static ModelsSetupDone() {
+    return Boolean(Helper[setupDoneSymbol]);
   }
 
 }

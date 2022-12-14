@@ -7,6 +7,8 @@ exports.default = void 0;
 
 var _cors = _interopRequireDefault(require("cors"));
 
+var _morgan = _interopRequireDefault(require("morgan"));
+
 var _bodyParser = require("body-parser");
 
 var _express = require("express");
@@ -17,5 +19,5 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _default = [(0, _express.json)(), (0, _bodyParser.urlencoded)({
   extended: false
-}), (0, _cors.default)(_cors2.default)];
+}), (0, _cors.default)(_cors2.default), (0, _morgan.default)('combined')];
 exports.default = _default;

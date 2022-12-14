@@ -23,7 +23,7 @@ exports.pathsToModuleAliases = (paths, options) => {
     const aliasPathKey = aliasPath.replace(/\/\*$/, '')
     const aliasPathValue = paths[aliasPath][0]?.replace(/\/\*$/, '')
 
-    const aliasPathSource = [pathPrefix, aliasPathValue].join('/')
+    const aliasPathSource = [pathPrefix, aliasPathValue || ''].join('/')
 
     moduleAliases[aliasPathKey] = aliasPathSource
   })

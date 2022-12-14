@@ -24,7 +24,7 @@ export class Auth {
         const passwordMatches = await compare(password, user.password)
 
         if (passwordMatches) {
-          const token = sign({ user: user._id }, process.env.APP_JWT_SECRET)
+          const token = sign({ user: user.id }, process.env.APP_JWT_SECRET)
 
           return { user, token }
         } else {
@@ -54,7 +54,7 @@ export class Auth {
     Object.keys(request.headers).forEach(header => {
       if (/^(authorization)$/i.test(header)) {
         const re = /^(Bearer\s+)/i
-        authorization.token = (
+        authorization.token = String(
           request.headers[header]
             .replace(re, '')
             .trim()
@@ -65,15 +65,26 @@ export class Auth {
     if (authorization.token) {
       try {
         const authData = verify(authorization.token, process.env.APP_JWT_SECRET)
+        const validAuthData = Auth.validateAuthData(authData)
 
-        if (authData) {
+        if (validAuthData) {
           return authData
         }
       } catch (err) {
       }
+    }
 
+    return false
+  }
+
+  static async validateAuthData (authData) {
+    if (!authData.id) {
       return false
     }
+
+    const user = await User.findById(authData.id)
+
+    return Boolean(user)
   }
 
   static _error (error) {
