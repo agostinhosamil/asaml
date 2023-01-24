@@ -8,6 +8,8 @@ export class AuthMiddleware extends AppMiddleware {
     console.log('Hi, I am a middleware')
   }
 
+  base () {}
+
   async jwt (request, response) {
     // some jwt implementation
     const auth = await Auth.authenticate(request)

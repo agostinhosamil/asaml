@@ -2,6 +2,7 @@ import { Route } from './Route'
 import { RouteSource } from './RouteSource'
 
 import { log } from '@config/log'
+import { RouterContext } from './RouterContext'
 
 const store = []
 
@@ -24,6 +25,29 @@ export class Router {
 
   static put () {
     return Router.factory('put', arguments)
+  }
+
+  static group (pathPrefix, ...args) {
+    const groupBody = args.length >= 1 ? args[-1 + args.length] : null
+
+    if (typeof groupBody === 'function') {
+      let sourcePrefix
+
+      if (typeof 'str' === typeof args[0]) {
+        sourcePrefix = args[0]
+      }
+
+      const routerContext = new RouterContext({
+        pathPrefix,
+        sourcePrefix
+      })
+
+      groupBody(routerContext)
+
+      if (routerContext.store instanceof Array) {
+        routerContext.store.forEach(route => store.push(route))
+      }
+    }
   }
 
   static factory (httpVerb, args) {

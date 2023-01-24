@@ -11,6 +11,8 @@ export class PagesController extends AppController {
     res.end('<h1>About Page</h1>')
   }
 
+  products () {}
+
   async login (req, res) {
     const { username, password } = req.body.user
 

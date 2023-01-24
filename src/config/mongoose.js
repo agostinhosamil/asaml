@@ -1,11 +1,11 @@
-import mongoose from 'mongoose'
+// import mongoose from 'mongoose'
 
-import { mongo } from './database'
+// import { mongo } from './database'
 
-mongoose.connect(mongo.url)
+// mongoose.connect(mongo.url)
 
-mongoose.promise = global.Promise
+// mongoose.promise = global.Promise
 
-// mongoose.disconnect()
+// // mongoose.disconnect()
 
-export default mongoose
+// export default mongoose

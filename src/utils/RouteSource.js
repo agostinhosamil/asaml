@@ -9,9 +9,9 @@ export class RouteSource {
   action = null
 
   constructor (sourceStr) {
-    // sourceStr ~= middlewareClass:method@controller/action
     const re = /([a-zA-Z0-9:_]*)@([a-zA-Z0-9:_]+)(\/[a-zA-Z0-9:_]*)?/i
 
+    // sourceStr ~= middlewareClass:method@controller/action
     if (!re.test(sourceStr)) {
       return null
     }
@@ -98,5 +98,53 @@ export class RouteSource {
 
   _title (str) {
     return str.charAt(0).toUpperCase() + str.slice(1, str.length)
+  }
+
+  static merge (prefix, source) {
+    const re = /(([a-zA-Z0-9_]*)(:([a-zA-Z0-9_]+))?)?((@([a-zA-Z0-9_]+))?(\/([a-zA-Z0-9_]+))?)?/i
+
+    // const sourcePropMap = [
+    //   2, // : 'middlewareName',
+    //   4, // : 'middlewareAction',
+    //   7, // : 'controllerName',
+    //   9 // : 'controllerAction'
+    // ]
+
+    const sourcePropsMap = {
+      middlewareName: 2,
+      middlewareAction: 3,
+      controllerName: 6,
+      controllerAction: 8
+    }
+
+    const sourceProps = {}
+
+    Array.from([prefix, source]).forEach(sourceStr => {
+      const sourceData = sourceStr.match(re)
+
+      Object.keys(sourcePropsMap).forEach(prop => {
+        if (sourceData[sourcePropsMap[prop]]) {
+          sourceProps[prop] = sourceData[sourcePropsMap[prop]]
+        }
+      })
+    })
+
+    Object.keys(sourcePropsMap).forEach(prop => {
+      if (!sourceProps[prop]) {
+        sourceProps[prop] = ''
+      }
+    })
+
+    return [
+      sourceProps.middlewareName,
+      sourceProps.middlewareAction,
+      sourceProps.controllerName,
+      sourceProps.controllerAction
+    ].join('')
+
+    // console.log('Prefix Match - ' + prefix + ' (' + prefix.match(re).length + ') => ', prefix.match(re))
+    // console.log('Source Match - ' + source + ' (' + source.match(re).length + ') => ', source.match(re))
+
+    // return [prefix, source].join('')
   }
 }

@@ -11,6 +11,11 @@
       "@controllers/*": [
         "./src/app/controllers/*"
       ],
+      "@helpers/*": [
+        "./src/helpers",
+        "./src/app/helpers",
+        "./vendor/helpers"
+      ],
       "@models/*": [
         "./src/app/models/*"
       ],

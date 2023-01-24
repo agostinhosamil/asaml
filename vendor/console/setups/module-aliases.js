@@ -3,18 +3,25 @@ const moduleAlias = require('module-alias')
 
 const { pathsToModuleAliases } = require('../helpers')
 
-const __rootDir = path.resolve(__dirname, '..', '..', '..')
+const rootDirPath = path.resolve(__dirname, '..', '..', '..')
+const jsConfigFilePath = path.resolve(rootDirPath, 'jsconfig.json')
 
-const { compilerOptions } = require(path.resolve(__rootDir, 'jsconfig.json'))
+const { compilerOptions } = require(jsConfigFilePath)
 
 const { paths, baseUrl } = compilerOptions
 
 const aliasPaths = pathsToModuleAliases(paths, { prefix: baseUrl })
 
 Object.keys(aliasPaths).forEach(aliasPath => {
-  const aliasPathSource = path.resolve(__rootDir, aliasPaths[aliasPath])
+  const aliasPathSource = typeof aliasPaths[aliasPath] !== typeof 'string'
+    ? aliasPaths[aliasPath]
+    : path.resolve(rootDirPath, aliasPaths[aliasPath])
 
-  moduleAlias.addAlias(aliasPath, aliasPathSource)
+  if (typeof aliasPathSource === 'function') {
+    moduleAlias.addAlias(aliasPath, aliasPathSource({ rootDir: rootDirPath }))
+  } else {
+    moduleAlias.addAlias(aliasPath, aliasPathSource)
+  }
 })
 
 moduleAlias()
