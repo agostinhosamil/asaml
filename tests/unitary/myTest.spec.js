@@ -9,5 +9,6 @@ describe('App Test', () => {
     // expect(user.name).toBe('John Doe')
 
     expect(user).toBe(user)
+    expect('ok').toBe('ok')
   })
 })

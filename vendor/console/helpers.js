@@ -5,6 +5,8 @@ exports.moduleAliasesToModuleNameMapper = (moduleAliases, options) => {
 
   if (typeof moduleAliases === 'object') {
     Object.keys(moduleAliases).forEach(moduleAlias => {
+      console.log(moduleAlias, moduleAliases[moduleAlias])
+
       const moduleAliasKeyRe = `^${moduleAlias}/(.*)$`
       const moduleAliasValue = `${pathPrefix}/${moduleAliases[moduleAlias].replace(/^(\.\/)+/, '')}/$1`
 
@@ -101,6 +103,44 @@ exports.pathsToModuleAliases = (paths, options) => {
   return moduleAliases
 }
 
-export function array ([args]) {
+exports.pathsToModuleNameMapper = (paths, options) => {
+  // moduleAliasesToModuleNameMapper, pathsToModuleAliases
+  // paths = exports.pathsToModuleAliases(paths, { prefix: '.' })
+  const moduleAliases = {}
+  const pathPrefix = typeof options.prefix === typeof 'str' ? options.prefix.replace(/(\/)+$/, '') : ''
+  const acceptMultiple = typeof options.multiple !== typeof true ? true : options.multiple
+
+  const parsePath = (pathPrefix, path) => {
+    const pathValue = path?.replace(/\/\*$/, '')
+
+    const absolutePathValue = [pathPrefix, pathValue || ''].join('/')
+
+    return `${absolutePathValue}/$1`
+  }
+
+  Object.keys(paths).forEach(aliasPath => {
+    const aliasPathKey = `^${aliasPath.replace(/\/\*$/, '')}/(.*)$`
+
+    if (paths[aliasPath] instanceof Array && (paths[aliasPath].length === 1 || !acceptMultiple)) {
+      // const aliasPathValue =
+
+      const aliasPathSource = parsePath(pathPrefix, paths[aliasPath][0]) // [pathPrefix, aliasPathValue || ''].join('/')
+
+      moduleAliases[aliasPathKey] = aliasPathSource
+
+      return
+    }
+
+    const aliasPathValues = typeof paths[aliasPath] === 'string' ? [paths[aliasPath]] : paths[aliasPath]
+
+    if (aliasPathValues instanceof Array) {
+      moduleAliases[aliasPathKey] = aliasPathValues.map(value => parsePath(pathPrefix, value))
+    }
+  })
+
+  return moduleAliases
+}
+
+exports.array = function array ([args]) {
   return args.trim().split(/\n+/).map(i => i.trim()) // Array.from(args).map(i => i.trim())
 }

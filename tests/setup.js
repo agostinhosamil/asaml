@@ -1,5 +1,5 @@
-import mongoose from '~/config/mongoose'
+// import mongoose from '~/config/mongoose'
 
 afterAll(async () => {
-  await mongoose.disconnect()
+  // await mongoose.disconnect()
 })
